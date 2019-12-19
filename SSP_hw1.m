@@ -3,14 +3,14 @@ close all
 n = 100;
 y = pingstats('www.google.com', n, 'v');
 
-y_lim = [min(y)-5 : max(y)+5];
+y_lim = [min(y)-2 : max(y)+2];
 
 %% Gaussian distribution
 mu_ML_g = 1/n * sum(y);
-sSquared_ML_g = 1/n * sum(power((y-mu_ML_g), 2));
+sSquared_ML_g = 1/n * sum((y-mu_ML_g).^2);
 
 f_g = (1/sqrt(2*pi*sSquared_ML_g)) * exp(-(y_lim-mu_ML_g).^2/(2*sSquared_ML_g));
-%% Rayleight distribution
+%% Rayleigh distribution
 sSquared_ML_r = 1/(2*n) * sum(power(y, 2));
 
 for i = 1:size(y_lim, 2)
@@ -54,67 +54,46 @@ end
 alpha_exp = min(y);
 lambda_exp = n/(sum(y)-n*alpha_exp);
 
-m = size(y_lim, 2);
-f_exp = zeros(1, m)
+size_y = size(y_lim, 2);
+f_exp = zeros(1, size_y);
 
-for i = 1:m
+for i = 1:size_y
     if y_lim(i) < alpha_exp
         f_exp(i) = 0;
     else
-        f_exp(i) = lambda_exp * exp(lambda_exp * (y_lim(i)-alpha_exp));
+        f_exp(i) = lambda_exp * exp(-lambda_exp * (y_lim(i)-alpha_exp));
     end
 end
 
 %% Shifted Rayleigh
 [alpha_hat, sigma_hat] = findOptimal(y);
 
-f_SR = zeros(1, m);
+f_SR = zeros(1, size_y);
 
-for i = 1:size(y_lim, 2)
+for i = 1:size_y
     if y_lim(i) < alpha_hat
         f_SR(i) = 0;
     else
-        f_SR(i) = (y_lim(i)-alpha_hat)/sigma_hat*exp(-(y(i)-alpha_hat)^2/(2*sigma_hat));
+        f_SR(i) = (y_lim(i)-alpha_hat)/sigma_hat * exp(-power(y_lim(i)-alpha_hat, 2)/(2*sigma_hat));
     end
 end
-
 
 %% Plots
 nbins = 100;
 
 histogram(y, nbins, 'Normalization', 'probability')
 hold on
-plot(y_lim, f_g, 'b');
-
-figure
-histogram(y, nbins, 'Normalization', 'probability')
-hold on
-plot(y_lim, f_r, 'g');
-
-figure
-histogram(y, nbins, 'Normalization', 'probability')
-hold on
-plot(y_lim, f_e_0, 'r');
-
-figure
-histogram(y, nbins, 'Normalization', 'probability')
-hold on
-plot(y_lim, f_e_1, 'c');
-
-figure
-histogram(y, nbins, 'Normalization', 'probability')
-hold on
-plot(y_lim, f_e_2,  'm');
-
-figure
-histogram(y, nbins, 'Normalization', 'probability')
-hold on
-plot (y_lim, f_exp, 'b');
-
-figure
-histogram(y, nbins, 'Normalization', 'probability')
-hold on
-plot (y_lim, f_SR, 'g');
+plot(y_lim, f_g);
+plot(y_lim, f_r);
+plot(y_lim, f_e_0);
+plot(y_lim, f_e_1);
+plot(y_lim, f_e_2);
+plot (y_lim, f_exp);
+plot (y_lim, f_SR);
+legend('observations', 'gaussian', 'rayleigh', 'erlang0', 'erlang1', 'erlang2', 'shiftedExp', 'shiftedRay')
+xlabel('observed values')
+ylabel('f')
+title('Comparison of different distributions')
 
 %% Maximization of the log likelihood
 log_L_g = -n/2*log(2*pi)-n/2*log(sSquared_ML_g)-1/(2*sSquared_ML_g)*sum(power((y-mu_ML_g), 2));
@@ -127,5 +106,5 @@ log_L_SR = sum(log(y-alpha_hat)) + n * log(1/sigma_hat) - sum((y-alpha_hat).^2/(
 % distributions = [gaussian; rayleigh; erlang_0; erlang_; erlang_2; exponential];
 log_likelihoods = [log_L_g, log_L_r, log_L_e_0, log_L_e_1, log_L_e_2, log_L_exp, log_L_SR];
 
-[argvalue, argmax] = max(log_likelihoods);
-distributions(argmax)
+[argvalue, argmax] = max(log_likelihoods)
+% distributions(argmax)

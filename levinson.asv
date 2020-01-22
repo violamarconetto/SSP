@@ -1,0 +1,17 @@
+function [error_variances, A, K] = levinson(correlation)
+n=20;
+A = zeros(1, n);
+K = zeros(1, n-1);
+error_variances = zeros(n);
+A(1) = 1;
+error_variances(1) = correlation(1);
+I = eye(n)
+for i=2:n
+    delta = correlation(i:1)*A(i-1);
+    K(i-1) = -delta/error_variances(i-1);
+    A(i) = [A(i-1), 0] + K(i-1)*[0, A((i-1):-1:1)];
+    error_variances(i) = error_variances(i-1)*(1-K^2);
+end
+
+%devo passare K(2:n)
+%A

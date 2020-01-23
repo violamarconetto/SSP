@@ -14,8 +14,6 @@ realizations = 100;
 noise_variance = 1;
 noise = sqrt(noise_variance)*randn(realizations, n);
 
-
-f = linspace(0, 1/2, 100); %how many samples of f should I take here?
 sigma_hat = zeros(1, k);
 A_1_hat = zeros(1, k);
 fi_1_hat = zeros(1, k);
@@ -28,7 +26,6 @@ for i=1:k
     y_k(:, i) = A_1*cos(2*pi*f_1*n_vect + fi_1) + noise(i);
 end
 
-% HO INTERPRETATO MALE LA TRACCIA. HO CONFUSO k e n. 
 % Compute the Fourier transform of the signal
 Y_f = fftshift(fft(y_k));
 
@@ -51,16 +48,14 @@ CRB_f_1_hat = 6*sigma_hat/((pi^2)*(n^3)*A_1^2);
 
 % Mean and variances
 
-A_1_hat_smean = 1/k * sum(A_1_hat);
-A_1_hat_svariance = 1/k * sum(A_1_hat - A_1_hat_smean)^2;
+A_1_hat_smean = 1/n * sum(A_1_hat);
+A_1_hat_svariance = 1/n * sum(A_1_hat - A_1_hat_smean)^2;
 
 f_1_hat_smean = 1/k * sum(f_1_hat);
-f_1_hat_svariance = 1/k * sum(f_1_hat - f_1_hat_smean)^2;
+f_1_hat_svariance = 1/n * sum(f_1_hat - f_1_hat_smean)^2;
 
-fi_1_hat_smean = 1/k * sum(fi_1_hat);
-fi_1_hat_svariance = 1/k * sum(fi_1_hat - fi_1_hat_smean)^2;
+fi_1_hat_smean = 1/n * sum(fi_1_hat);
+fi_1_hat_svariance = 1/n * sum(fi_1_hat - fi_1_hat_smean)^2;
 
-sigma_hat_smean = 1/k * sum(sigma_hat);
-sigma_hat_svariance = 1/k * sum(sigma_hat - sigma_hat_smean)^2;
-
-
+sigma_hat_smean = 1/n * sum(sigma_hat);
+sigma_hat_svariance = 1/n * sum(sigma_hat - sigma_hat_smean)^2;

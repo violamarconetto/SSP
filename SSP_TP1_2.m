@@ -1,0 +1,66 @@
+clear all
+close all
+clc
+
+
+%% point e
+sigma = 1;
+A_1 = sqrt(2);
+fi_1 = 0;
+f_1 = 1/8;
+n = 32;
+k = 100;
+realizations = 100;
+noise_variance = 1;
+noise = sqrt(noise_variance)*randn(realizations, n);
+
+
+f = linspace(0, 1/2, 100); %how many samples of f should I take here?
+sigma_hat = zeros(1, k);
+A_1_hat = zeros(1, k);
+fi_1_hat = zeros(1, k);
+fi_1_hat = zeros(1, k);
+
+y_k = zeros(n, k);
+n_vect = [0:1:n-1];
+
+for i=1:k
+    y_k(:, i) = A_1*cos(2*pi*f_1*n_vect + fi_1) + noise(i);
+end
+
+% HO INTERPRETATO MALE LA TRACCIA. HO CONFUSO k e n. 
+% Compute the Fourier transform of the signal
+Y_f = fftshift(fft(y_k));
+
+for i=1:k
+    [argvalue, argmax] = max(Y_f(:, i));
+    f_1_hat(i) = argmax;
+    Y_f_1_hat(i) = argvalue;
+    A_1_hat(i) = 2/n*abs(Y_f_1_hat(i));
+    fi_1_hat(i) = angle(Y_f_1_hat(i));
+    sigma_hat(i) = 1/n * sum(y_k(:, i)-A_1_hat(i)*cos(2*pi*f_1_hat(i)*i + fi_1_hat(i)))^2;
+end
+
+% Try also the second implementation? Maybe ask the phd student tomorrow...
+
+% Cramer Rao Bound (CRB)
+
+CRB_f_1_hat = 6*sigma_hat/((pi^2)*(n^3)*A_1^2);
+
+% This is a theorical question: you can keep this for tomorrow...
+
+% Mean and variances
+
+A_1_hat_smean = 1/k * sum(A_1_hat);
+A_1_hat_svariance = 1/k * sum(A_1_hat - A_1_hat_smean)^2;
+
+f_1_hat_smean = 1/k * sum(f_1_hat);
+f_1_hat_svariance = 1/k * sum(f_1_hat - f_1_hat_smean)^2;
+
+fi_1_hat_smean = 1/k * sum(fi_1_hat);
+fi_1_hat_svariance = 1/k * sum(fi_1_hat - fi_1_hat_smean)^2;
+
+sigma_hat_smean = 1/k * sum(sigma_hat);
+sigma_hat_svariance = 1/k * sum(sigma_hat - sigma_hat_smean)^2;
+
+

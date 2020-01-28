@@ -10,6 +10,7 @@ f1=sigpar(1);
 f2=sigpar(2);
 A1=sigpar(3);
 A2=sigpar(4);
-r=(A1^2/2)*cos(2*pi*(f1*[0:N-1]'))+(A2^2/2)*cos(2*pi*((f2)*[0:N-1]'));
+r=(A1^2/2)*cos(2*pi*((f1)*[0:N-1]'))+(A2^2/2)*cos(2*pi*((f2)*[0:N-1]'));
 r(1)=r(1)+1;
 r=r(:);	% force a column vector
+

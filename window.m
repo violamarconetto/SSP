@@ -36,4 +36,3 @@ elseif strcmp(type,'triang')==1
 	end
 
 end;
-

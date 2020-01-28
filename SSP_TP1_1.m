@@ -71,9 +71,3 @@ ylabel('K(0:20)')
 grid on
 
 sgtitle('Riccardo I love you')
-
-
-
-
-
-

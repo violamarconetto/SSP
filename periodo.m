@@ -1,4 +1,3 @@
-
 function periodo(signal,N)
 % function periodo(signal,N)
 % Plots the periodogram of the signal over N frequential bins.
@@ -26,6 +25,3 @@ plot(f,10*log10(DSP.^2))
 grid
 xlabel('Normalized frequency')
 ylabel('dB')
-
-
-
